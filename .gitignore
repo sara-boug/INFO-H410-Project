@@ -1,2 +1,5 @@
 data/dataset/images/*
 data/dataset/masks/*
+
+**/.idea
+**/__pycache__

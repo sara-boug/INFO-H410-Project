@@ -1,15 +1,15 @@
 import argparse
-import source.base_parameters as params
-from source.generate_data import GenerateData
+import source.config as config
+from source.generate_data import TrainingDataGenerator
 
 
 class ModeTrainer:
 
     @staticmethod
     def generate_data():
-        data_generator = GenerateData(images_path=params.images_dataset_path.masks,
-                                      masks_path=params.masks_dataset_path)
-        data_generator.generate()
+        data_generator = TrainingDataGenerator(images_path=config.images_dataset_path,
+                                               masks_path=config.masks_dataset_path)
+        data_generator.execute()
 
 
 if __name__ == "__main__":

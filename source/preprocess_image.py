@@ -1,4 +1,4 @@
-import source.base_parameters as params
+import source.config as config
 
 import SimpleITK as sitk
 import numpy as np
@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 
 class PreprocessImage:
     def __init__(self, image_path: str, mask_path: str):
-        self.image = sitk.ReadImage(image_path, "NiftiImageIO")
-        self.mask = sitk.ReadImage(mask_path, "NiftiImageIO")
+        self.image = sitk.ReadImage(image_path)
+        self.mask = sitk.ReadImage(mask_path)
 
     def to_nparray(self):
         self.image = sitk.GetArrayFromImage(self.image)
@@ -49,7 +49,8 @@ class PreprocessImage:
     @staticmethod
     def __resize_image(image: sitk.Image):
         image_size = image.GetSize()  # [x,y,z]
-        new_size = params.image_size.append(image_size[2])  # As we are only in need to resize the height and the width
+        new_size = config.image_size.copy()
+        new_size.append(image_size[2])  # As we are only in need to resize the height and the width
         reference_image = sitk.Image(new_size, image.GetPixelIDValue())
         reference_image.SetOrigin(image.GetOrigin())
         reference_image.SetDirection(image.GetDirection())

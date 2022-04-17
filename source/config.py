@@ -2,6 +2,9 @@ import os
 
 image_size = [128, 128]
 
+#
+val_set_ratio = 0.2
+test_set_ratio = 0.2
 # dataset paths
 dataset_path = os.path.join(os.getcwd(), "data", "dataset")
 masks_dataset_path = os.path.join(dataset_path, "masks")

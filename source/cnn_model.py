@@ -37,5 +37,8 @@ class CNN:
         output = Dense(depth)(input)
         output = Dense(depth, activation="softmax")(output)
         return output
+    @staticmethod
+    def __deconv_layer(input,depth):
+        pass
 
 
