@@ -1,6 +1,6 @@
 import os
 
-image_size = [128, 128]
+image_size = [128, 128, 1] # Height * Width* Channel
 
 #
 val_set_ratio = 0.2
@@ -12,9 +12,9 @@ images_dataset_path = os.path.join(dataset_path, "images")
 
 # training, validation and test data paths
 preprocessed_base_path = os.path.join(os.getcwd(), "data", "preprocessed_data")
-training_set_path = os.path.join(preprocessed_base_path, "training_set")
+training_set_path = os.path.join(preprocessed_base_path, "validation_set")
 test_set_path = os.path.join(preprocessed_base_path, "training_set")
-validation_set_path = os.path.join(preprocessed_base_path, "training_set")
+validation_set_path = os.path.join(preprocessed_base_path, "test_set")
 
 # number_of data
 num_data = 100
