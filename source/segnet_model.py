@@ -1,16 +1,16 @@
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Input, BatchNormalization, \
-    UpSampling2D, Softmax, Concatenate
+from tensorflow.keras.layers import Conv2D, Input, BatchNormalization, \
+    UpSampling2D,  Concatenate, MaxPool2D
 from tensorflow.keras.models import Model
-
+from source.config import network_input_shape
 
 class SegNet:
 
-    def __init__(self, labels_num: int, input):
+    def __init__(self, labels_num: int, input_shape):
         self.labels_num = labels_num
-        self.input = input
+        self.input_shape = input_shape
 
     def get_model(self) -> Model:
-        input = Input(self.input)
+        input = Input(batch_input_shape=network_input_shape)
         # Encoder layer
         output_conv1 = self.__layer_conv2(input, 64)
         output_conv2 = self.__layer_conv2(output_conv1, 128)
@@ -29,11 +29,11 @@ class SegNet:
 
     @staticmethod
     def __layer_conv2(input, depth):
-        output = Conv2D(depth, (3, 3), padding="same", activation='relu')(input)
+        output = Conv2D(depth, (3, 3), padding="same", activation='relu',)(input)
         output = BatchNormalization()(output)
-        output = Conv2D(depth, (3, 3), padding="same", activation='relu')(output)
+        output = Conv2D(depth, (3, 3), padding="same", activation='relu',)(output)
         output = BatchNormalization()(output)
-        output = MaxPooling2D((2, 2), strides=2)(output)  # No overlap
+        output = MaxPool2D((2, 2), strides=2, )(output)  # No overlap
         return output
 
     @staticmethod
@@ -44,7 +44,7 @@ class SegNet:
         output = BatchNormalization()(output)
         output = Conv2D(depth, (3, 3), padding="same", activation='relu')(output)
         output = BatchNormalization()(output)
-        output = MaxPooling2D((2, 2), strides=2)(output)  # No overlap
+        output = MaxPool2D((2, 2), strides=2)(output)  # No overlap
         return output
 
     @staticmethod
@@ -91,4 +91,3 @@ class SegNet:
         return output
 
 
-SegNet(4, (128, 128, 3)).get_model().summary()
