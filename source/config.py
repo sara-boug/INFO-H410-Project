@@ -16,6 +16,12 @@ training_set_path = os.path.join(preprocessed_base_path, "training_set")
 test_set_path = os.path.join(preprocessed_base_path, "test_set")
 validation_set_path = os.path.join(preprocessed_base_path, "validation_set")
 
+# model and metrics path
+
+model_folder = os.path.join(os.getcwd(), "data", "generated_models")
+model_path = os.path.join(model_folder, "segnet_model.ckpt")
+metrics_path = os.path.join(model_folder, "metrics.csv")
+
 # number_of data
 num_data = 5  # reflect the original 3D data that has been used 
 batch_size = 2

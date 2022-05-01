@@ -1,11 +1,13 @@
 import math
 import os
+import logging
 
-from source.config import epochs, batch_size, image_size, num_classes
+from source.config import epochs, batch_size, num_classes, model_path, metrics_path
 
 import tensorflow as tf
 import numpy as np
 import SimpleITK as sitk
+import pandas as pd
 
 
 class SegNetTrainer:
@@ -13,24 +15,68 @@ class SegNetTrainer:
         self.train_data_path = train_data_path
         self.val_data_path = val_data_path
 
-    def train(self, model, loss_func, optimizer):
+    def train(self, model, loss_func, accuracy_func, optimizer):
         # both images and masks have (batch_size, all_batches) shape
         train_images, train_masks = self.__get_files(path=self.train_data_path)
-        # val_ds = self.__get_files(path=self.val_data_path)
+
+        metrics_df = pd.DataFrame([], columns=['epoch', 'train_loss', 'val_loss', 'accuracy'])
+        metrics_df.to_csv(metrics_path)
+
+        # metrics
+        training_losses = []
+        validation_losses = []
+        accuracies = []
+
         for epoch in range(epochs):
+            training_losses.clear()
+            validation_losses.clear()
+            accuracies.clear()
+
+            # training
             for f_image, f_mask in zip(train_images, train_masks):
                 image_batch = self.__extract_batch_data_array(f_image, True)
 
                 mask_batch = self.__extract_batch_data_array(f_mask, True)
-                mask_batch = tf.keras.utils.to_categorical(mask_batch, num_classes=num_classes,dtype='float32')
+                mask_batch = tf.keras.utils.to_categorical(mask_batch, num_classes=num_classes, dtype='float32')
 
                 with tf.GradientTape() as tape:
                     sfmx_logits = model(image_batch, training=True)  # Softmax output probabilities
                     loss = loss_func(mask_batch, sfmx_logits)
-                    print(loss)
+
+                    training_losses.append(loss)
 
                 grads = tape.gradient(loss, model.trainable_weights)
                 optimizer.apply_gradients(zip(grads, model.trainable_weights))
+
+            # validation
+            for f_image, f_mask in zip(train_images, train_masks):
+                image_batch = self.__extract_batch_data_array(f_image, True)
+
+                mask_batch = self.__extract_batch_data_array(f_mask, True)
+                mask_batch = tf.keras.utils.to_categorical(mask_batch, num_classes=num_classes, dtype='float32')
+                sfmx_logits = model(image_batch, training=True)  # Softmax output probabilities
+                loss = loss_func(mask_batch, sfmx_logits)
+                validation_losses.append(loss)
+                accuracy = accuracy_func(mask_batch, sfmx_logits)
+                accuracies.append(accuracy)
+
+            self.__write_to_csv(training_losses, validation_losses, accuracies, metrics_df, epoch)
+
+    @staticmethod
+    def __write_to_csv(training_losses, validation_losses, accuracies, dataframe, epoch):
+        tmean = np.mean(training_losses)
+        vmean = np.mean(validation_losses)
+        amean = np.mean(accuracies)
+
+        losses_df = dataframe.append({'epoch': epoch,
+                                      'train_loss': tmean,
+                                      'val_loss': vmean,
+                                      'accuracy': amean,
+                                      }, ignore_index=True)
+        losses_df.to_csv(metrics_path, header=False, mode='a')
+        logging.info(f"train loss : {tmean}")
+        logging.info(f"validation loss : {vmean}")
+        logging.info(f"accuracy : {amean}")
 
     @staticmethod
     def __get_files(path) -> np.array:

@@ -7,6 +7,7 @@ from source.segnet_model import SegNet
 
 import tensorflow as tf
 
+
 class ModeTrainer:
 
     @staticmethod
@@ -21,9 +22,10 @@ class ModeTrainer:
                                        val_data_path=config.validation_set_path)
         model = SegNet(config.num_classes, config.network_input_shape).get_model()
         loss_func = tf.keras.losses.CategoricalCrossentropy()
-        optimizer = tf.keras.optimizers.SGD(learning_rate=1e-3)
+        accuracy_func = tf.keras.metrics.CategoricalAccuracy(name="categorical_accuracy", dtype=None)
+        optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
 
-        segnet_trainer.train(model=model, loss_func=loss_func, optimizer=optimizer)
+        segnet_trainer.train(model=model, loss_func=loss_func, accuracy_func=accuracy_func,optimizer=optimizer)
 
 
 if __name__ == "__main__":
