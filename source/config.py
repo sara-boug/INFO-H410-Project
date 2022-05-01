@@ -19,7 +19,7 @@ validation_set_path = os.path.join(preprocessed_base_path, "validation_set")
 # model and metrics path
 
 model_folder = os.path.join(os.getcwd(), "data", "generated_models")
-model_path = os.path.join(model_folder, "segnet_model.ckpt")
+model_path = os.path.join(model_folder, "segnet_model.h5")
 metrics_path = os.path.join(model_folder, "metrics.csv")
 
 # number_of data

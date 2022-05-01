@@ -6,6 +6,7 @@ from source.trainer import SegNetTrainer
 from source.segnet_model import SegNet
 
 import tensorflow as tf
+import keras.backend as K
 
 
 class ModeTrainer:
@@ -15,14 +16,24 @@ class ModeTrainer:
         data_generator = TrainingDataGenerator(images_path=config.images_dataset_path,
                                                masks_path=config.masks_dataset_path)
         data_generator.execute()
-
+    
     @staticmethod
-    def train_segnet():
+    def _dice_index(ground_truth, prediction, smooth=1e-6):
+
+      #flatten label and prediction tensors
+      targets = K.flatten( ground_truth)
+      inputs = K.flatten(prediction)
+      intersection = K.sum( targets* inputs)
+      dice = (2*intersection + smooth) / (K.sum(targets) + K.sum(inputs) + smooth)
+      return dice
+
+   
+    def train_segnet(self):
         segnet_trainer = SegNetTrainer(train_data_path=config.training_set_path,
                                        val_data_path=config.validation_set_path)
         model = SegNet(config.num_classes, config.network_input_shape).get_model()
         loss_func = tf.keras.losses.CategoricalCrossentropy()
-        accuracy_func = tf.keras.metrics.CategoricalAccuracy(name="categorical_accuracy", dtype=None)
+        accuracy_func = self._dice_index
         optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
 
         segnet_trainer.train(model=model, loss_func=loss_func, accuracy_func=accuracy_func,optimizer=optimizer)
