@@ -1,6 +1,6 @@
 import os
 
-image_size = [128, 128, 1]  # Height * Width* Channel
+image_size = [128, 128,]  # Height * Width* Channel
 
 #
 val_set_ratio = 0.2
@@ -17,8 +17,8 @@ test_set_path = os.path.join(preprocessed_base_path, "test_set")
 validation_set_path = os.path.join(preprocessed_base_path, "validation_set")
 
 # number_of data
-num_data = 100
-batch_size = 1
+num_data = 5  # reflect the original 3D data that has been used 
+batch_size = 2
 epochs = 1000
 num_classes = 5
 network_input_shape = (batch_size, 128, 128, 1)

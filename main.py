@@ -7,7 +7,6 @@ from source.segnet_model import SegNet
 
 import tensorflow as tf
 
-
 class ModeTrainer:
 
     @staticmethod

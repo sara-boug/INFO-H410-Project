@@ -12,10 +12,14 @@ class TrainingDataGenerator:
         self.masks_path = masks_path
 
     def execute(self):
-        images_dir_files = os.listdir(self.images_path)
+        images_dir_files= os.listdir(self.images_path)
+        images_dir_files = [file_name for file_name in images_dir_files if ".nii" in file_name ]
         images_dir_files.sort()
-        masks_dir_files = os.listdir(self.masks_path)
-        masks_dir_files.sort()
+
+        masks_dir_files = os.listdir(self.masks_path) 
+        masks_dir_files = [file_name for file_name in masks_dir_files if ".nii" in file_name ]
+        masks_dir_files .sort()
+
         assert len(images_dir_files) == len(masks_dir_files)  # the masks and the images should be equal
         counter = 0
         counter_index = 0

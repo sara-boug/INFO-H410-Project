@@ -51,7 +51,10 @@ class PreprocessImage:
         image_size = image.GetSize()  # [x,y,z]
         new_size = config.image_size.copy()
         new_size.append(image_size[2])  # As we are only in need to resize the height and the width
+        
+      
         reference_image = sitk.Image(new_size, image.GetPixelIDValue())
+
         reference_image.SetOrigin(image.GetOrigin())
         reference_image.SetDirection(image.GetDirection())
         reference_image.SetSpacing([

@@ -27,6 +27,7 @@ class SegNetTrainer:
                 with tf.GradientTape() as tape:
                     sfmx_logits = model(image_batch, training=True)  # Softmax output probabilities
                     loss = loss_func(mask_batch, sfmx_logits)
+                    print(loss)
 
                 grads = tape.gradient(loss, model.trainable_weights)
                 optimizer.apply_gradients(zip(grads, model.trainable_weights))
