@@ -1,7 +1,8 @@
 from tensorflow.keras.layers import Conv2D, Input, BatchNormalization, \
-    UpSampling2D,  Concatenate, MaxPool2D
+    UpSampling2D, Concatenate, MaxPool2D
 from tensorflow.keras.models import Model
 from source.config import network_input_shape
+
 
 class SegNet:
 
@@ -29,21 +30,21 @@ class SegNet:
 
     @staticmethod
     def __layer_conv2(input, depth):
-        output = Conv2D(depth, (3, 3), padding="same", activation='relu',)(input)
-        output = BatchNormalization()(output)
-        output = Conv2D(depth, (3, 3), padding="same", activation='relu',)(output)
-        output = BatchNormalization()(output)
+        output = Conv2D(depth, (3, 3), padding="same", activation='relu', )(input)
+        output = BatchNormalization()(output, training=True)
+        output = Conv2D(depth, (3, 3), padding="same", activation='relu', )(output)
+        output = BatchNormalization()(output, training=True)
         output = MaxPool2D((2, 2), strides=2, )(output)  # No overlap
         return output
 
     @staticmethod
     def __layer_conv3(input, depth):
         output = Conv2D(depth, (3, 3), padding="same", activation='relu')(input)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         output = Conv2D(depth, (3, 3), padding="same", activation='relu')(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         output = Conv2D(depth, (3, 3), padding="same", activation='relu')(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         output = MaxPool2D((2, 2), strides=2)(output)  # No overlap
         return output
 
@@ -54,9 +55,9 @@ class SegNet:
             output = Concatenate()([input1, input2])
         output = UpSampling2D(size=(2, 2))(output)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         return output
 
     @staticmethod
@@ -64,9 +65,9 @@ class SegNet:
         output = Concatenate()([input1, input2])
         output = UpSampling2D(size=(2, 2))(output)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=False)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         return output
 
     @staticmethod
@@ -76,9 +77,9 @@ class SegNet:
             output = Concatenate()([input1, input2])
         output = UpSampling2D(size=(2, 2))(output)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         return output
 
     @staticmethod
@@ -86,8 +87,6 @@ class SegNet:
         output = Concatenate()([input1, input2])
         output = UpSampling2D(size=(2, 2))(output)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output)
+        output = BatchNormalization()(output, training=True)
         output = Conv2D(num_labels, (3, 3), padding="same", activation="softmax")(output)
         return output
-
-

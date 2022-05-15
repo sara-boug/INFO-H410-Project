@@ -20,7 +20,6 @@ class SegNetTrainer:
         train_images, train_masks = self.__get_files(path=self.train_data_path)
         val_images, val_masks = self.__get_files(path=self.val_data_path)
 
-
         metrics_df = pd.DataFrame([], columns=['epoch', 'train_loss', 'val_loss', 'accuracy'])
         metrics_df.to_csv(metrics_path)
 
@@ -52,7 +51,7 @@ class SegNetTrainer:
 
             # validation
             for f_image, f_mask in zip(val_images, val_masks):
-                image_batch = self.__extract_batch_data_array(f_image,  False)
+                image_batch = self.__extract_batch_data_array(f_image, False)
 
                 mask_batch = self.__extract_batch_data_array(f_mask, False)
                 mask_batch = tf.keras.utils.to_categorical(mask_batch, num_classes=num_classes, dtype='float32')
@@ -64,7 +63,7 @@ class SegNetTrainer:
 
             self.__write_to_csv(training_losses, validation_losses, accuracies, metrics_df, epoch)
             model.save(model_path)
-            
+
     @staticmethod
     def __write_to_csv(training_losses, validation_losses, accuracies, dataframe, epoch):
         tmean = np.mean(training_losses)

@@ -31,7 +31,7 @@ class PreprocessImage:
     def __normalize_image(image):
         min = float(image.min())
         max = float(image.max())
-        return np.floor((image - min) / (max - min))
+        return  (image - min) / (max - min)
 
     def display_slice(self, index):
         plt.figure(figsize=[15, 8])
@@ -51,8 +51,7 @@ class PreprocessImage:
         image_size = image.GetSize()  # [x,y,z]
         new_size = config.image_size.copy()
         new_size.append(image_size[2])  # As we are only in need to resize the height and the width
-        
-      
+
         reference_image = sitk.Image(new_size, image.GetPixelIDValue())
 
         reference_image.SetOrigin(image.GetOrigin())
