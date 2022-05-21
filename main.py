@@ -1,10 +1,11 @@
 import argparse
+import os
 
 import source.config as config
 from source.generate_data import TrainingDataGenerator
 from source.trainer import SegNetTrainer
 from source.segnet_model import SegNet
-from source.test_model import  TestModel
+from source.test_model import TestModel
 
 import tensorflow as tf
 import keras.backend as K
@@ -16,14 +17,22 @@ class ModeTrainer:
     def generate_data():
         data_generator = TrainingDataGenerator(images_path=config.images_dataset_path,
                                                masks_path=config.masks_dataset_path)
-        #data_generator.execute()
+        # data_generator.execute()
         data_generator.generate_files_per_set()
 
-    def test_segnet(self):
+    @staticmethod
+    def test_segnet(image):
         model_tester = TestModel(config.model_path)
-        image_path = "/home/sara/Documents/techniques_of_artificial_intelligence/INFO-H410-Project/data" \
-                     "/preprocessed_data/training_set/image125.nii "
-        predict = model_tester.predict(image_path)
+        image_name = image + ".nii"
+        mask_name = image + "_segmentation.nii"
+
+        image_path = os.path.join(config.test_set_path, image_name)
+        mask_path = os.path.join(config.test_set_path, mask_name)
+
+        model_tester.predict(image_path, mask_path)
+    @staticmethod
+    def show_evolution(path_to_metrics):
+        TestModel.display_training_evolution(path_to_metrics)
 
     @staticmethod
     def multi_class_dice_score(ground_truth, prediction):
@@ -51,7 +60,7 @@ class ModeTrainer:
         optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
 
         segnet_trainer.train(model=model,
-                  loss_func=loss_func, accuracy_func=accuracy_func, optimizer=optimizer)
+                             loss_func=loss_func, accuracy_func=accuracy_func, optimizer=optimizer)
 
 
 if __name__ == "__main__":
@@ -59,6 +68,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--preprocess', action='store_true', required=False)
     parser.add_argument('--train', action='store_true', required=False)
+    parser.add_argument('--show_evol', action='store_true', required=False)
     parser.add_argument('--test', action='store_true', required=False)
 
     arguments = parser.parse_args()
@@ -70,4 +80,6 @@ if __name__ == "__main__":
     if arguments.train:
         model_trainer.train_segnet()
     if arguments.test:
-        model_trainer.test_segnet()
+        model_trainer.test_segnet("image647")
+    if arguments.show_evol:
+        model_trainer.show_evolution(config.metrics_path)

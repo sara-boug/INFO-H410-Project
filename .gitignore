@@ -1,10 +1,6 @@
-data/dataset/images/*
-data/dataset/masks/*
-
-data/preprocessed_data/images/*
-data/preprocessed_data/masks/*
-
-data/*
+data/dataset/*
+data/preprocessed_data/*
+data/generated_models/*
 
 .idea
 **/__pycache__
