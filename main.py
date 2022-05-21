@@ -16,7 +16,8 @@ class ModeTrainer:
     def generate_data():
         data_generator = TrainingDataGenerator(images_path=config.images_dataset_path,
                                                masks_path=config.masks_dataset_path)
-        data_generator.execute()
+        #data_generator.execute()
+        data_generator.generate_files_per_set()
 
     def test_segnet(self):
         model_tester = TestModel(config.model_path)
@@ -46,10 +47,11 @@ class ModeTrainer:
                                        val_data_path=config.validation_set_path)
         model = SegNet(config.num_classes, config.network_input_shape).get_model()
         loss_func = self.multi_class_dice_score
-        accuracy_func = self.multi_class_dice_score
+        accuracy_func = tf.keras.metrics.MeanIoU(num_classes=5)
         optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
 
-        segnet_trainer.train(model=model, loss_func=loss_func, accuracy_func=accuracy_func, optimizer=optimizer)
+        segnet_trainer.train(model=model,
+                  loss_func=loss_func, accuracy_func=accuracy_func, optimizer=optimizer)
 
 
 if __name__ == "__main__":

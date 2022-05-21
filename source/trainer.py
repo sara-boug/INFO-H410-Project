@@ -18,6 +18,7 @@ class SegNetTrainer:
     def train(self, model, loss_func, accuracy_func, optimizer):
         # both images and masks have (batch_size, all_batches) shape
         train_images, train_masks = self.__get_files(path=self.train_data_path)
+         
         val_images, val_masks = self.__get_files(path=self.val_data_path)
 
         metrics_df = pd.DataFrame([], columns=['epoch', 'train_loss', 'val_loss', 'accuracy'])

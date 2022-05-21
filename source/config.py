@@ -12,6 +12,8 @@ images_dataset_path = os.path.join(dataset_path, "images")
 
 # training, validation and test data paths
 preprocessed_base_path = os.path.join(os.getcwd(), "data", "preprocessed_data")
+preprocessed_all = os.path.join(preprocessed_base_path, "all")
+
 training_set_path = os.path.join(preprocessed_base_path, "training_set")
 test_set_path = os.path.join(preprocessed_base_path, "test_set")
 validation_set_path = os.path.join(preprocessed_base_path, "validation_set")
@@ -24,7 +26,7 @@ metrics_path = os.path.join(model_folder, "metrics.csv")
 
 # number_of data
 num_data = 5  # reflect the original 3D data that has been used 
-batch_size = 2
+batch_size = 4
 epochs = 1000
 num_classes = 5
 network_input_shape = (batch_size, 128, 128, 1)

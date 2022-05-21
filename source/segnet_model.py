@@ -65,7 +65,7 @@ class SegNet:
         output = Concatenate()([input1, input2])
         output = UpSampling2D(size=(2, 2))(output)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
-        output = BatchNormalization()(output, training=False)
+        output = BatchNormalization()(output, training=True)
         output = Conv2D(depth, (3, 3), padding="same", )(output)
         output = BatchNormalization()(output, training=True)
         return output

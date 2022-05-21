@@ -1,0 +1,10 @@
+data/dataset/images/*
+data/dataset/masks/*
+
+data/preprocessed_data/images/*
+data/preprocessed_data/masks/*
+
+data/*
+
+.idea
+**/__pycache__
