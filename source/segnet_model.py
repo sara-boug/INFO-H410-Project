@@ -5,6 +5,10 @@ from source.config import network_input_shape
 
 
 class SegNet:
+    """
+    Defines the segnet model architecture
+
+    """
 
     def __init__(self, labels_num: int, input_shape):
         self.labels_num = labels_num

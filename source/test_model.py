@@ -7,18 +7,32 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import pandas as pd
 
+
 class TestModel:
+    """
+    Performs the necessary operation for the model testing
+
+    This include, displaying the predictions, displaying the model evolutions
+    """
     def __init__(self, path_to_model):
         self.model = keras.models.load_model(path_to_model,
                                              custom_objects=None, compile=False, options=None
                                              )
 
     def predict(self, path_to_image, path_to_mask):
-        image_ = self.__get_image(path_to_image)
+        """
+        Receives an image and returns a plot comparing the prediction
+        with the ground truth
+
+        :param path_to_image: path to the image to predict
+        :param path_to_mask: path to the mask to predict
+        :return:
+        """
+        image_ = self.__get_image(path_to_image)  # image: [H,W]
         mask = self.__get_image(path_to_mask)
 
-        image = np.expand_dims(image_, axis=0)
-        predicted = self.model.predict(image)
+        image = np.expand_dims(image_, axis=0)  # image shape : [C,H,W]
+        predicted = self.model.predict(image)  # shape:  [5,C,H,W] (5 are the number of the classes )
 
         predicted = np.argmax(predicted, axis=-1)
         cmap = plt.cm.viridis
@@ -46,7 +60,17 @@ class TestModel:
         return image_arr
 
     @staticmethod
+    def compute_model_performance():
+        pass
+
+    @staticmethod
     def display_training_evolution(path_to_metrics):
+        """
+        Displays the model metrics during the training
+
+        :param path_to_metrics: The csv dile containing all the metrics
+        :return:
+        """
         df = pd.read_csv(path_to_metrics)
         epoch = (df["epoch"]).tolist()
         train_loss = (df["train_loss"]).tolist()
@@ -59,11 +83,3 @@ class TestModel:
         plt.plot(epoch, accuracy, label="Accuracy")
         plt.legend()
         plt.show()
-
-
-
-
-
-
-
-

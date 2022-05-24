@@ -8,6 +8,7 @@ mkdir -p "$DATA"/dataset
 mkdir -p "$DATA"/generated_models
 mkdir -p "$DATA"/loaded_data
 mkdir -p "$DATA"/"$P_DATA_FOLDER"
+mkdir -p "$DATA"/"$P_DATA_FOLDER"/all
 mkdir -p "$DATA"/"$P_DATA_FOLDER"/test_set
 mkdir -p "$DATA"/"$P_DATA_FOLDER"/training_set
 mkdir -p "$DATA"/"$P_DATA_FOLDER"/validation_set

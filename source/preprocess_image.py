@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 
 
 class PreprocessImage:
+    """
+    Performs the necessary preprocessing for the image
+    """
     def __init__(self, image_path: str, mask_path: str):
         self.image = sitk.ReadImage(image_path)
         self.mask = sitk.ReadImage(mask_path)
