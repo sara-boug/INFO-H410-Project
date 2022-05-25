@@ -32,9 +32,9 @@ class SegNetTrainer:
         """
         # 1 : Extract the training set and validation file names
         # both images and masks have (batch_size, all_batches) shape
-        train_images, train_masks = self.__get_files(path=self.train_data_path)
+        train_images, train_masks = self.get_files(path=self.train_data_path)
 
-        val_images, val_masks = self.__get_files(path=self.val_data_path)
+        val_images, val_masks = self.get_files(path=self.val_data_path)
         # 2: Define the dataframe  that will contain the model metrics
         metrics_df = pd.DataFrame([], columns=['epoch', 'train_loss', 'val_loss', 'accuracy'])
         metrics_df.to_csv(metrics_path)
@@ -84,9 +84,9 @@ class SegNetTrainer:
 
     @staticmethod
     def __write_to_csv(training_losses, validation_losses, accuracies, dataframe, epoch):
-        tmean = np.mean(training_losses) # training loss mean
-        vmean = np.mean(validation_losses) # validation loss mean
-        amean = np.mean(accuracies) # accuracies mean
+        tmean = np.mean(training_losses)  # training loss mean
+        vmean = np.mean(validation_losses)  # validation loss mean
+        amean = np.mean(accuracies)  # accuracies mean
 
         losses_df = dataframe.append({'epoch': epoch,
                                       'train_loss': tmean,
@@ -99,11 +99,12 @@ class SegNetTrainer:
         logging.info(f"accuracy : {amean}")
 
     @staticmethod
-    def __get_files(path) -> np.array:
+    def get_files(path, with_batch=False) -> np.array:
         """
          Extracts the files  from the given path
 
         A tuple is returned such as [[image1,mask1],[images2, mask2]....]
+        :param with_batch:
         :param path: path to the folder
         :return:
         """
@@ -114,12 +115,16 @@ class SegNetTrainer:
         masks = files[:, 1]
         assert images.shape[0] == masks.shape[0]
 
-        intended_size = math.floor(images.shape[0] / batch_size + 1)
-        # Now the data will be partitioned according to the batch size
-        images = np.array_split(images, intended_size, )
+        if with_batch:
+            intended_size = math.floor(images.shape[0] / batch_size + 1)
 
-        masks = np.array_split(masks, intended_size)
-        return images, masks
+            # Now the data will be partitioned according to the batch size
+            images = np.array_split(images, intended_size, )
+
+            masks = np.array_split(masks, intended_size)
+            return images, masks
+        else :
+            return images, masks
 
     def __extract_batch_data_array(self, file_names, is_training: bool):
         """

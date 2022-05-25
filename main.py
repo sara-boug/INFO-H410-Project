@@ -21,6 +21,11 @@ class ModeTrainer:
         data_generator.generate_files_per_set()
 
     @staticmethod
+    def get_model_performance():
+        model_tester = TestModel(config.model_path)
+        model_tester.compute_model_performance_perclass()
+
+    @staticmethod
     def test_segnet(image):
         model_tester = TestModel(config.model_path)
         image_name = image + ".nii"
@@ -30,6 +35,7 @@ class ModeTrainer:
         mask_path = os.path.join(config.test_set_path, mask_name)
 
         model_tester.predict(image_path, mask_path)
+
     @staticmethod
     def show_evolution(path_to_metrics):
         TestModel.display_training_evolution(path_to_metrics)
@@ -68,6 +74,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--preprocess', action='store_true', required=False)
     parser.add_argument('--train', action='store_true', required=False)
+    parser.add_argument('--performance', action='store_true', required=False)
     parser.add_argument('--show_evol', action='store_true', required=False)
     parser.add_argument('--test', action='store_true', required=False)
 
@@ -83,3 +90,5 @@ if __name__ == "__main__":
         model_trainer.test_segnet("image647")
     if arguments.show_evol:
         model_trainer.show_evolution(config.metrics_path)
+    if arguments.performance:
+        model_trainer.get_model_performance()
