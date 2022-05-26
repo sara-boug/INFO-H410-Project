@@ -1,6 +1,6 @@
 import os
 
-image_size = [128, 128,]  # Height * Width* Channel
+image_size = [128, 128, ]  # Height * Width* Channel
 
 #
 val_set_ratio = 0.2
@@ -30,3 +30,4 @@ batch_size = 4
 epochs = 1000
 num_classes = 5
 network_input_shape = (batch_size, 128, 128, 1)
+threshold = 0.98  # (prediction threshold )

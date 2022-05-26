@@ -2,15 +2,15 @@ import os
 
 import source.config as config
 from source.trainer import SegNetTrainer
+from source.metrics import multi_class_dice_score, multi_class_jaccard_score
 
 from tensorflow import keras
-from tensorflow.keras.metrics import IoU
-from tensorflow_addons.metrics import F1Score
 import SimpleITK as sitk
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 import pandas as pd
+import tensorflow as tf
 
 
 class TestModel:
@@ -68,11 +68,11 @@ class TestModel:
     def compute_model_performance_perclass(self):
         path = config.test_set_path
         test_images, test_masks = SegNetTrainer.get_files(path, False)
-        jaccard_indices = []
-        counter = 0
 
+        all_classes_dice = []
+        all_classes_jaccard = []
+        counter = 0
         for f_image, f_mask in zip(test_images, test_masks):
-            if counter == 10 : break
             image_path = os.path.join(path, f_image)
             mask_path = os.path.join(path, f_mask)
 
@@ -81,38 +81,46 @@ class TestModel:
             mask_cate = keras.utils.to_categorical(mask, num_classes=config.num_classes, dtype='float32')
 
             image = np.expand_dims(image, axis=0)  # image shape : [C,H,W]
-            predicted = self.model.predict(image)  # shape:  [5,C,H,W] (5 are the number of the classes )
-            jaccard  = self.__compute_metric(predicted, mask_cate)
 
-            jaccard_indices.append(jaccard)
+            # shape:  [5,C,H,W] (5 are the number of  the classes )
+            predicted = (self.model.predict(image) > config.threshold) * 1
+            predicted = tf.cast(predicted, dtype='float32')
 
-            counter += 1
+            dice = multi_class_dice_score(predicted, mask_cate, per_class=True)
+            jaccard = multi_class_jaccard_score(predicted, mask_cate, per_class=True)
 
-        jaccard_indices = np.array(jaccard_indices)
-        self.__compute_mean_metric_per_class(jaccard_indices)
+            all_classes_jaccard.append(jaccard)
+            all_classes_dice.append(dice)
 
-    @staticmethod
-    def __compute_metric(prediction, ground_truth):
-        iou = []
-        for i in range(prediction.shape[3]):
-            metric = IoU(2, target_class_ids=[0])
-            metric.update_state(prediction[0, :, :, i], ground_truth[:, :, i])
-            iou.append(metric.result().numpy())
-        return iou
+        all_classes_jaccard = np.array(all_classes_jaccard)
+        all_classes_dice = np.array(all_classes_dice)
+
+        self.__compute_mean_metric_per_class(all_classes_jaccard,all_classes_dice)
 
     @staticmethod
-    def __compute_mean_metric_per_class(jaccard_metric):
+    def __compute_mean_metric_per_class(jaccard_metric, dice_metric):
 
-        liver_mean_jaccard = np.mean(jaccard_metric[:, 1])
-        kidney_mean_jaccard = np.mean(jaccard_metric[:, 2])
-        spleen_mean_jaccard = np.mean(jaccard_metric[:, 3])
-        pancreas_mean_jaccard = np.mean(jaccard_metric[:, 4])
+        liver_mean_jaccard = 1 - np.mean(jaccard_metric[:, 1])
+        kidney_mean_jaccard = 1 - np.mean(jaccard_metric[:, 2])
+        spleen_mean_jaccard = 1 - np.mean(jaccard_metric[:, 3])
+        pancreas_mean_jaccard = 1 - np.mean(jaccard_metric[:, 4])
+
+        liver_mean_dice = 1 - np.mean(dice_metric[:, 1])
+        kidney_mean_dice = 1 - np.mean(dice_metric[:, 2])
+        spleen_mean_dice = 1 - np.mean(dice_metric[:, 3])
+        pancreas_mean_dice = 1 - np.mean(dice_metric[:, 4])
 
         print("Jaccard Index :")
         print(f"The liver :{liver_mean_jaccard}")
         print(f"The kidney :{kidney_mean_jaccard}")
         print(f"The spleen :{spleen_mean_jaccard}")
         print(f"The pancreas :{pancreas_mean_jaccard}")
+
+        print("Dice Index :")
+        print(f"The liver :{liver_mean_dice}")
+        print(f"The kidney :{kidney_mean_dice}")
+        print(f"The spleen :{spleen_mean_dice}")
+        print(f"The pancreas :{pancreas_mean_dice}")
 
     @staticmethod
     def display_training_evolution(path_to_metrics):
