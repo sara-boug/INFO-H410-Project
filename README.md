@@ -12,16 +12,16 @@ This structure should be maintained all over the upcoming commands, otherwise, c
 ---------------------------------
 ```text
 /INFO-H410-Project 
-&ensp; /data  
-&ensp;    /dataset  
- &ensp;&ensp;&ensp;      /images  
- &ensp;&ensp;&ensp;      /masks  
- &ensp;   /generated_models  
-  &ensp;  /preprocessed_data  
-  &ensp;&ensp;&ensp;    /all
-  &ensp;&ensp;&ensp;    /test_set
-  &ensp;&ensp;&ensp;    /training_set
-  &ensp;&ensp;&ensp;    /validation_set
+ /data  
+    /dataset  
+        /images  
+        /masks  
+    /generated_models  
+    /preprocessed_data  
+        /all
+        /test_set
+        /training_set
+        /validation_set
 ``` 
 ### Data preparation
 
