@@ -94,4 +94,5 @@ to measure the overall model performance. As we are dealing with multiclass segm
 poetry run python main.py ----performance
 ```
 The following will be displayed in the command line :
+
 ![Alt text](readme_images/perform.png )
