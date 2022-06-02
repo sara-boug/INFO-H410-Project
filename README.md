@@ -5,8 +5,8 @@
 
 ---------------------------------
 
-Ensure the following structure of the data folder, optionally run bash file to generate the folders **generate_data_folder.sh**
-This structure should be maintained all over the upcoming commands, otherwise, compilation errors will occur
+Ensure the following structure of the data folder is respected, optionally run bash file to generate the folders **generate_data_folder.sh**
+This structure should be maintained all over the upcoming commands, otherwise, compilation errors will occur. 
 #### *Data Folder structure*
 
 ---------------------------------
@@ -29,11 +29,11 @@ This structure should be maintained all over the upcoming commands, otherwise, c
 The process to prepare the data for the training is as follows : 
 
 - The data is loaded from https://flare.grand-challenge.org/Data/.
-- As the data is 3D; initially it is preprocessed (resize, normalized and standardized ..etc),
+- As the data is 3D; it is initially preprocessed (resized, normalized ..etc),
   then, the slices are extracted and loaded into **/preprocessed_data/all**. 
-- Read the data from **/preprocessed_data/all** and divide it into  *Training*,*Validation* and *Test* set 
+- The Data read from **/preprocessed_data/all** and divide it into  *Training*,*Validation* and *Test* set 
 
-*Note: the size of the generated data ca be modified in **source/config**,to preserver GPU memory the images are fixed to 128 x 128*
+*Note: the size of the generated data can be modified in **source/config**,to preserve GPU memory the images are fixed to 128 x 128*
 
 The above can be accomplished by running the following command  : 
 ```
@@ -42,7 +42,7 @@ poetry run python main.py --preprocess
 ### Train the model 
 
 ---------------------------------
-The file  **source/config.py** contains all the parameters and hyperparameters that allows modifying the model for instance the learning rate, the mini batch size ...etc
+The file  **source/config.py** contains all the parameters and hyperparameters that allow modifying the model for instance the learning rate, the mini batch size ...etc
 ```
 poetry run python main.p --train
 ```
@@ -62,11 +62,11 @@ Run the following command :
 poetry run python main.py --show-evol
 ```
 For example, the following will be display 
-![Alt text](readme_images/evol.png "Training evolution")
+<img src="readme_images/evol.png"  width="400" height="250" />
 ### Perform a prediction
 
 ---------------------------------
-To perform a prediction and display it on give test data, run the following command
+To perform a prediction and display it on given test data, run the following command
 
 ```
 poetry run python main.py --predict [image_name]
@@ -75,9 +75,8 @@ ensure that **[image_name]**  is from **/preprocessed_data/test_set**
 else it won't work. 
 
 A CT Scan image with comparison of the segmentation in between the ground Truth and the prediction 
-
-![Alt text](readme_images/predic.png "Training evolution")
-
+<img src="readme_images/predic.png" width="350" height="400" />
+ 
 An example command :
 ```
 poetry run python main.py --predict image3707
@@ -94,5 +93,9 @@ to measure the overall model performance. As we are dealing with multiclass segm
 poetry run python main.py ----performance
 ```
 The following will be displayed in the command line :
+<img src="readme_images/perform.png"  width="300" height="200" />
 
-![Alt text](readme_images/perform.png )
+---------------------------------
+
+#### Warning 
+Ensure that the python version used is >=3.7 else installation issue will arise with poetry 

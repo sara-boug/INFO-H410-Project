@@ -49,7 +49,7 @@ class TrainingDataGenerator:
             preprocess_image_obj.resize()
             preprocess_image_obj.to_nparray()
 
-            preprocess_image_obj.standardize()
+            # preprocess_image_obj.standardize()
             preprocess_image_obj.normalize()
 
             image = preprocess_image_obj.image

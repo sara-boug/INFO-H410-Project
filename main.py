@@ -16,7 +16,10 @@ class ModeTrainer:
     def generate_data():
         data_generator = TrainingDataGenerator(images_path=config.images_dataset_path,
                                                masks_path=config.masks_dataset_path)
-        # data_generator.execute()
+
+        # Generate all the data /all
+        data_generator.execute()
+        # Generate the data per set
         data_generator.generate_files_per_set()
 
     @staticmethod
